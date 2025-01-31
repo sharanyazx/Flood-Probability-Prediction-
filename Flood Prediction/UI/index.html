@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label {
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #775cd8;
+        }
+        .error {
+            color: red;
+        }
+        img {
+            max-width: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Flood Probability Prediction and Hazard Zone Modeling</h2>
+    <form id="inputForm" action="/submit_data" method="post">
+        <label for="river">Select River:</label><br>
+        <select id="river" name="river">
+            <option value="Cauvery">Cauvery</option>
+            <option value="Godavari">Godavari</option>
+            <option value="Son">Son</option>
+            <option value="Mahanadi">Mahanadi</option>
+            <option value="Krishna">Krishna</option>
+        </select><br>
+        <label for="discharge">Discharge:</label><br>
+        <input type="text" id="discharge" name="discharge"><br>
+        <label for="daily_runoff">Daily Runoff:</label><br>
+        <input type="text" id="daily_runoff" name="daily_runoff"><br>
+        <label for="weekly_runoff">Weekly Runoff:</label><br>
+        <input type="text" id="weekly_runoff" name="weekly_runoff"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <img id="dotPlot" src="" alt="Dot Plot">
+    <img id="barPlot" src="" alt="Bar Plot">
+
+    <script>
+        document.getElementById('inputForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            var formData = new FormData(this); // Create FormData object from form data
+            
+            // Send form data to server using Fetch API
+            fetch('/submit_data', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // Parse JSON response
+            .then(data => {
+                // Update image sources based on response data
+                document.getElementById('dotPlot').src = data.dotPlotSrc;
+                document.getElementById('barPlot').src = data.barPlotSrc;
+                
+                // Display images
+                document.getElementById('dotPlot').style.display = 'block';
+                document.getElementById('barPlot').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
